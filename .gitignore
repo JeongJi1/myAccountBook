@@ -1,0 +1,71 @@
+HELP.md
+.gradle
+build/
+!gradle/wrapper/gradle-wrapper.jar
+!**/src/main/**/build/
+!**/src/test/**/build/
+
+### STS ###
+.apt_generated
+.classpath
+.factorypath
+.project
+.settings
+.springBeans
+.sts4-cache
+bin/
+!**/src/main/**/bin/
+!**/src/test/**/bin/
+
+### IntelliJ IDEA ###
+.idea
+*.iws
+*.iml
+*.ipr
+out/
+!**/src/main/**/out/
+!**/src/test/**/out/
+
+### NetBeans ###
+/nbproject/private/
+/nbbuild/
+/dist/
+/nbdist/
+/.nb-gradle/
+
+### VS Code ###
+.vscode/
+
+# ===============================
+# Custom Additions
+# ===============================
+
+### Logs ###
+*.log
+logs/
+
+### OS Files ###
+.DS_Store
+Thumbs.db
+
+### Environment Variables ###
+.env
+
+### Spring Boot Sensitive Config ###
+application-local.yml
+application-prod.yml
+application-secret.yml
+
+### Docker ###
+docker-compose.override.yml
+
+### Database ###
+*.db
+*.sqlite
+
+### Coverage ###
+coverage/
+*.exec
+
+### Node ###
+node_modules/
