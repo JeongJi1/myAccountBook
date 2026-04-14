@@ -11,10 +11,9 @@ import java.time.LocalDateTime;
 @Table(name="disbursement")
 @Builder
 @Getter
-@Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class disbursement {
+public class Disbursement {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -29,23 +28,23 @@ public class disbursement {
     private String category;
 
     @Column(name = "expense_dt", nullable = false)
-    private LocalDateTime expense_dt;
+    private LocalDateTime expenseDt;
 
     @Column(name = "created_dt", nullable = false)
-    private LocalDateTime created_dt;
+    private LocalDateTime createdDt;
 
     @Column(name = "updated_dt", nullable = false)
-    private LocalDateTime updated_dt;
+    private LocalDateTime updatedDt;
 
     @PrePersist
     protected void onCreate() {
-        this.created_dt = LocalDateTime.now();
-        this.updated_dt = LocalDateTime.now();
+        this.createdDt = LocalDateTime.now();
+        this.updatedDt = LocalDateTime.now();
     }
 
     @PreUpdate
     protected void onUpdate() {
-        this.updated_dt = LocalDateTime.now();
+        this.updatedDt = LocalDateTime.now();
     }
 
 
