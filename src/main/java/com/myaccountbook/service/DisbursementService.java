@@ -19,10 +19,10 @@ public class DisbursementService {
     @Transactional
     public Disbursement createDisbursement(CreateDisbursementRequestDTO request) {
         Disbursement disbursement = Disbursement.builder()
-                .amount(request.getAmount())
-                .descr(request.getDescr())
-                .category(request.getCategory())
-                .expenseDt(request.getExpenseDt())
+                .amount(request.amount())
+                .descr(request.descr())
+                .category(request.category())
+                .expenseDt(request.expenseDt())
                 .build();
 
         return disbursementRepository.save(disbursement);
@@ -44,10 +44,10 @@ public class DisbursementService {
         Disbursement disbursement = getDisbursementById(id);
 
         disbursement.update(
-                request.getAmount(),
-                request.getDescr(),
-                request.getCategory(),
-                request.getExpenseDt()
+                request.amount(),
+                request.descr(),
+                request.category(),
+                request.expenseDt()
         );
 
         return disbursement;
