@@ -8,7 +8,7 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 @Getter
-public class DisbursementRequest {
+public class CreateDisbursementRequestDTO  {
     @NotNull(message = "금액은 필수입니다.")
     private BigDecimal amount;
 

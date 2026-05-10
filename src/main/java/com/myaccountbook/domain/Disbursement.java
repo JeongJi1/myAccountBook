@@ -2,18 +2,18 @@ package com.myaccountbook.domain;
 
 import jakarta.persistence.*;
 import lombok.*;
-import org.springframework.web.bind.annotation.GetMapping;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 @Entity
 @Table(name="disbursement")
-@Builder
 @Getter
-@NoArgsConstructor
-@AllArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@AllArgsConstructor(access = AccessLevel.PRIVATE)
+@Builder
 public class Disbursement {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -36,6 +36,18 @@ public class Disbursement {
     @Column(name = "updated_dt", nullable = false)
     private LocalDateTime updatedDt;
 
+    public void update(
+            BigDecimal amount,
+            String descr,
+            String category,
+            LocalDateTime expenseDt
+    ) {
+        this.amount = amount;
+        this.descr = descr;
+        this.category = category;
+        this.expenseDt = expenseDt;
+    }
+
     @PrePersist
     protected void onCreate() {
         this.createdDt = LocalDateTime.now();
@@ -46,6 +58,4 @@ public class Disbursement {
     protected void onUpdate() {
         this.updatedDt = LocalDateTime.now();
     }
-
-
 }

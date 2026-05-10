@@ -1,20 +1,22 @@
 package com.myaccountbook.service;
 
 import com.myaccountbook.domain.Disbursement;
-import com.myaccountbook.dto.DisbursementRequest;
-import com.myaccountbook.dto.DisbursementResponse;
+import com.myaccountbook.dto.CreateDisbursementRequestDTO;
 import com.myaccountbook.repository.DisbursementRepository;
-import jakarta.transaction.Transactional;
-import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 @Service
-@RequiredArgsConstructor
-@Transactional
 public class DisbursementService {
-    private final DisbursementRepository disbursementRepositoy;
 
-    public DisbursementResponse create(DisbursementRequest request) {
+    @Autowired
+    private DisbursementRepository disbursementRepository;
+
+    @Transactional
+    public Disbursement createDisbursement(CreateDisbursementRequestDTO request) {
         Disbursement disbursement = Disbursement.builder()
                 .amount(request.getAmount())
                 .descr(request.getDescr())
@@ -22,7 +24,37 @@ public class DisbursementService {
                 .expenseDt(request.getExpenseDt())
                 .build();
 
-        Disbursement saved = disbursementRepositoy.save(disbursement);
-        return DisbursementResponse.from(saved);
+        return disbursementRepository.save(disbursement);
+    }
+
+    @Transactional(readOnly = true)
+    public List<Disbursement> getAllDisbursements() {
+        return disbursementRepository.findAll();
+    }
+
+    @Transactional(readOnly = true)
+    public Disbursement getDisbursementById(Long id) {
+        return disbursementRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Disbursement not found with id: " + id));
+    }
+
+    @Transactional
+    public Disbursement updateDisbursement(Long id, CreateDisbursementRequestDTO request) {
+        Disbursement disbursement = getDisbursementById(id);
+
+        disbursement.update(
+                request.getAmount(),
+                request.getDescr(),
+                request.getCategory(),
+                request.getExpenseDt()
+        );
+
+        return disbursement;
+    }
+
+    @Transactional
+    public void deleteDisbursement(Long id) {
+        Disbursement disbursement = getDisbursementById(id);
+        disbursementRepository.delete(disbursement);
     }
 }
