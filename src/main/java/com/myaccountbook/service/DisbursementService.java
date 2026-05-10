@@ -2,6 +2,7 @@ package com.myaccountbook.service;
 
 import com.myaccountbook.domain.Disbursement;
 import com.myaccountbook.dto.CreateDisbursementRequestDTO;
+import com.myaccountbook.global.exception.EntityNotFoundException;
 import com.myaccountbook.repository.DisbursementRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -35,7 +36,7 @@ public class DisbursementService {
     @Transactional(readOnly = true)
     public Disbursement getDisbursementById(Long id) {
         return disbursementRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Disbursement not found with id: " + id));
+                .orElseThrow(() -> new EntityNotFoundException("존재하지 않는 지출 내역입니다. id: " + id));
     }
 
     @Transactional
