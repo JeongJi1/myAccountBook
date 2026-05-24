@@ -1,17 +1,26 @@
 # myAccountBook
 
-Java/Spring Boot 기반 가계부 백엔드 포트폴리오 프로젝트.
-단순 CRUD를 넘어 실무 스타일의 시스템 구축을 목표로 하며,
-향후 AI 기반 소비 분석 및 문자 파싱 기능으로 확장 예정.
+Java/Spring Boot 백엔드 + Expo(React Native) 모바일 앱으로 구성된 가계부 포트폴리오 프로젝트.
+단순 CRUD를 넘어 AI 기반 소비 분석, 알림 파싱 자동 등록, 매일 밤 AI 소비 조언 푸시까지 구현 목표.
 
 ## 기술 스택
 
+### 백엔드
 - Java 17
 - Spring Boot 3.x
 - Spring Data JPA
-- PostgreSQL
+- PostgreSQL (Docker)
 - Gradle
 - IntelliJ IDEA
+
+### 모바일 (다음 단계부터 시작)
+- Expo (React Native) — iOS / Android 크로스플랫폼
+- TypeScript
+- 로컬 개발: 같은 Wi-Fi 환경에서 PC 로컬 IP로 백엔드 접속
+
+### 외부 서비스 (단계적 도입)
+- Claude API — 알림 텍스트 파싱, AI 소비 조언 생성
+- Firebase Cloud Messaging (FCM) — 푸시 알림 (iOS APNs 포함)
 
 ## 프로젝트 구조
 
@@ -22,7 +31,7 @@ src/main/java/.../
 ├── repository   # DB 접근 (Spring Data JPA)
 ├── domain       # JPA 엔티티
 ├── dto          # Request / Response 분리
-└── global       # 예외처리, 공통 설정 (예정)
+└── global       # 예외처리, 공통 응답 구조
 ```
 
 ## 개발 원칙 (반드시 준수)
@@ -34,8 +43,8 @@ src/main/java/.../
 
 ### 계층 분리
 - Controller → Service → Repository 구조 엄격히 유지
-- Controller: 요청 검증, DTO 변환, 호출만 담당 (비즈니스 로직 금지)
-- Service: 비즈니스 로직의 중심
+- Controller: 요청 수신, Service 호출, Response 반환만 담당 (비즈니스 로직 금지)
+- Service: 비즈니스 로직 + 엔티티 ↔ DTO 변환 담당, Response DTO 반환
 - Repository: 쿼리 메서드 또는 `@Query` 활용
 
 ### DTO
@@ -47,6 +56,10 @@ src/main/java/.../
 - 모든 Service 메서드에 `@Transactional` 적용
 - 조회 전용 메서드는 `@Transactional(readOnly = true)` 명시
 - 트랜잭션 범위는 Service 계층 내에서만
+
+### 의존성 주입
+- `@Autowired` 필드 주입 금지
+- `@RequiredArgsConstructor` + `private final` 생성자 주입 사용
 
 ### 코드 품질
 - 실무 스타일, 포트폴리오 수준 품질로 작성
@@ -71,26 +84,38 @@ src/main/java/.../
 
 ## 현재 구현 상태
 
-- ✅ PostgreSQL 연동
-- ✅ Disbursement 엔티티
-- ✅ Disbursement Create API
-- ✅ Disbursement Read API
-- ⏳ Update / Delete API
-- ⏳ 예외처리 (`global` 패키지)
-- ⏳ 카테고리 관리
-- ⏳ 통계 / 집계 API
-- 🔮 (장기) AI 기반 소비 분석, 문자 파싱
+### 백엔드
+- ✅ PostgreSQL 연동 (Docker)
+- ✅ Disbursement CRUD API
+- ✅ Category CRUD API
+- ✅ 통계 / 집계 API (`/statistics/monthly`, `/statistics/category`)
+- ✅ 전역 예외처리 (`GlobalExceptionHandler`)
+- ✅ 생성자 주입, DTO 분리, Service 계층 DTO 변환
+
+### 모바일 앱 — 단계별 로드맵
+- ⏳ **1단계**: Expo 앱 기본 (지출 CRUD + 통계 + 카테고리) + 백엔드 연결
+- ⏳ **2단계**: 백엔드 사용자 인증 (JWT) + 앱 로그인/회원가입
+- ⏳ **3단계**: 알림 Share Sheet → Claude AI 파싱 → 지출 자동 등록
+  - iOS: Share Sheet로 알림 텍스트 전달 (자동 읽기 불가 — iOS 정책)
+  - Android: SMS BroadcastReceiver로 자동 읽기 가능
+- ⏳ **4단계**: FCM 푸시 알림 + 매일 밤 10시 @Scheduled AI 소비 조언
 
 ## 도메인 정보
 
-### `disbursement` 테이블
+### `category` 테이블
+| 컬럼명      | 설명       |
+|-----------|----------|
+| id        | PK       |
+| name      | 카테고리명 (unique) |
+| created_dt | 생성 일시  |
 
+### `disbursement` 테이블
 | 컬럼명       | 설명                  |
 |------------|---------------------|
 | id         | PK                  |
 | amount     | 지출 금액              |
 | descr      | 설명                  |
-| category   | 카테고리               |
+| category_id | FK → category.id   |
 | expense_dt | 지출 일시              |
 | created_dt | 생성 일시              |
 | updated_dt | 수정 일시              |

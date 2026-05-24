@@ -1,11 +1,11 @@
 package com.myaccountbook.controller;
 
-import com.myaccountbook.domain.Disbursement;
 import com.myaccountbook.dto.CreateDisbursementRequestDTO;
 import com.myaccountbook.dto.DisbursementResponse;
+import com.myaccountbook.dto.UpdateDisbursementRequestDTO;
 import com.myaccountbook.service.DisbursementService;
 import jakarta.validation.Valid;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -14,45 +14,38 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/disbursements")
+@RequiredArgsConstructor
 public class DisbursementController {
 
-    @Autowired
-    private DisbursementService disbursementService;
+    private final DisbursementService disbursementService;
 
-    // Create a new Disbursement
     @PostMapping
     public ResponseEntity<DisbursementResponse> createDisbursement(@RequestBody @Valid CreateDisbursementRequestDTO request) {
-        Disbursement createdDisbursement = disbursementService.createDisbursement(request);
-        return new ResponseEntity<>(DisbursementResponse.from(createdDisbursement), HttpStatus.CREATED);
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(disbursementService.createDisbursement(request));
     }
 
-    // List all Disbursements
     @GetMapping
     public ResponseEntity<List<DisbursementResponse>> getAllDisbursements() {
-        List<Disbursement> disbursements = disbursementService.getAllDisbursements();
-        return new ResponseEntity<>(disbursements.stream()
-                .map(DisbursementResponse::from)
-                .toList(), HttpStatus.OK);
+        return ResponseEntity.ok(disbursementService.getAllDisbursements());
     }
 
-    // Get a single Disbursement by ID
     @GetMapping("/{id}")
     public ResponseEntity<DisbursementResponse> getDisbursementById(@PathVariable Long id) {
-        Disbursement disbursement = disbursementService.getDisbursementById(id);
-        return new ResponseEntity<>(DisbursementResponse.from(disbursement), HttpStatus.OK);
+        return ResponseEntity.ok(disbursementService.getDisbursementById(id));
     }
 
-    // Update an existing Disbursement
     @PutMapping("/{id}")
-    public ResponseEntity<DisbursementResponse> updateDisbursement(@PathVariable Long id, @RequestBody @Valid CreateDisbursementRequestDTO request) {
-        Disbursement updatedDisbursement = disbursementService.updateDisbursement(id, request);
-        return new ResponseEntity<>(DisbursementResponse.from(updatedDisbursement), HttpStatus.OK);
+    public ResponseEntity<DisbursementResponse> updateDisbursement(
+            @PathVariable Long id,
+            @RequestBody @Valid UpdateDisbursementRequestDTO request
+    ) {
+        return ResponseEntity.ok(disbursementService.updateDisbursement(id, request));
     }
 
-    // Delete a Disbursement
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteDisbursement(@PathVariable Long id) {
         disbursementService.deleteDisbursement(id);
-        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        return ResponseEntity.noContent().build();
     }
 }

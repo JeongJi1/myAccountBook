@@ -9,7 +9,8 @@ public record DisbursementResponse(
         Long id,
         BigDecimal amount,
         String descr,
-        String category,
+        Long categoryId,
+        String categoryName,
         LocalDateTime expenseDt,
         LocalDateTime createdDt,
         LocalDateTime updatedDt
@@ -19,7 +20,8 @@ public record DisbursementResponse(
                 disbursement.getId(),
                 disbursement.getAmount(),
                 disbursement.getDescr(),
-                disbursement.getCategory(),
+                disbursement.getCategory() != null ? disbursement.getCategory().getId() : null,
+                disbursement.getCategory() != null ? disbursement.getCategory().getName() : null,
                 disbursement.getExpenseDt(),
                 disbursement.getCreatedDt(),
                 disbursement.getUpdatedDt()

@@ -24,8 +24,9 @@ public class Disbursement {
     @Column(nullable = false)
     private String descr;
 
-    @Column(nullable = false)
-    private String category;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "category_id")
+    private Category category;
 
     @Column(name = "expense_dt", nullable = false)
     private LocalDateTime expenseDt;
@@ -39,7 +40,7 @@ public class Disbursement {
     public void update(
             BigDecimal amount,
             String descr,
-            String category,
+            Category category,
             LocalDateTime expenseDt
     ) {
         this.amount = amount;
