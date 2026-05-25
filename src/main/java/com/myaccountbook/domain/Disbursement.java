@@ -25,6 +25,10 @@ public class Disbursement {
     private String descr;
 
     @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id", nullable = false)
+    private User user;
+
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "category_id")
     private Category category;
 
@@ -36,6 +40,10 @@ public class Disbursement {
 
     @Column(name = "updated_dt", nullable = false)
     private LocalDateTime updatedDt;
+
+    public boolean isOwnedBy(Long userId) {
+        return this.user.getId().equals(userId);
+    }
 
     public void update(
             BigDecimal amount,

@@ -12,14 +12,17 @@ public interface DisbursementRepository extends JpaRepository<Disbursement, Long
 
     boolean existsByCategoryId(Long categoryId);
 
+    List<Disbursement> findAllByUserId(Long userId);
+
     @Query(value = """
             SELECT EXTRACT(MONTH FROM expense_dt)::int AS month, SUM(amount) AS total
             FROM disbursement
-            WHERE expense_dt >= :start AND expense_dt < :end
+            WHERE user_id = :userId AND expense_dt >= :start AND expense_dt < :end
             GROUP BY EXTRACT(MONTH FROM expense_dt)
             ORDER BY 1
             """, nativeQuery = true)
     List<Object[]> findMonthlyStats(
+            @Param("userId") Long userId,
             @Param("start") LocalDateTime start,
             @Param("end") LocalDateTime end
     );
@@ -28,11 +31,12 @@ public interface DisbursementRepository extends JpaRepository<Disbursement, Long
             SELECT c.name AS category_name, SUM(d.amount) AS total, COUNT(d.id) AS count
             FROM disbursement d
             JOIN category c ON d.category_id = c.id
-            WHERE d.expense_dt >= :start AND d.expense_dt < :end
+            WHERE d.user_id = :userId AND d.expense_dt >= :start AND d.expense_dt < :end
             GROUP BY c.name
             ORDER BY total DESC
             """, nativeQuery = true)
     List<Object[]> findCategoryStats(
+            @Param("userId") Long userId,
             @Param("start") LocalDateTime start,
             @Param("end") LocalDateTime end
     );

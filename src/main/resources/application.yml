@@ -19,3 +19,11 @@ spring:
 
 server:
   port: 8080
+
+jwt:
+  secret: ${JWT_SECRET}
+
+kakao:
+  rest-api-key: ${KAKAO_REST_API_KEY}
+  redirect-uri: ${KAKAO_REDIRECT_URI}
+  app-redirect-uri: ${KAKAO_APP_REDIRECT_URI}
